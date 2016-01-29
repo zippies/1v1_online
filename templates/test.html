@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}
+1v1_auto
+{% endblock %}
+{% block style %}
+<script src="/static/js/socket.io-1.3.7.js"></script>
+{% endblock %}
+{% block body %}
+	<div style="text-align:left;margin-top:30px">
+		<label>测试服务IP:</label>
+		<div id="ipdiv" class="input-group">
+			<input id="serviceip" type="text" onfocus="clearStyle('ipbtn')" class="form-control" value="{{ serviceip }}">
+			<span class="input-group-btn">
+				<button id="ipbtn" class="btn btn-default" type="button" onclick="send('123456')">修改</button>
+			</span>
+		</div><!-- /input-group -->
+		<div style="text-align:left;margin-top:20px">
+			<label class="form-group">点击运行测试:</label>
+        	<button id="run" onclick="run()" class="btn btn-primary">Run now</button>
+		</div>
+		<div style="margin-top:10px">
+		    <label id="status"></label>
+		</div>
+		<div id="resultdiv" class="list-group">
+		</div>
+		<div id="bottom">
+		</div>
+	</div>
+	<script language="javascript" charset="utf-8">
+		function now() {
+			var date = new Date();
+			var seperator1 = "-";
+			var seperator2 = ":";
+			var month = date.getMonth() + 1;
+			var strDate = date.getDate();
+			var minute = date.getMinutes();
+			
+			
+			
+			if (month >= 1 && month <= 9) {
+				month = "0" + month;
+			}
+			if (strDate >= 0 && strDate <= 9) {
+				strDate = "0" + strDate;
+			}
+			if (minute >= 0 && minute <= 9) {
+				minute = "0" + minute;
+			}
+			var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+					+ " " + date.getHours() + seperator2 + minute
+					+ seperator2 + date.getSeconds();
+			return currentdate;
+		}
+
+		function clearStyle(id) {
+			btn = document.getElementById(id);
+			ipdiv = document.getElementById('ipdiv')
+			btn.setAttribute('class','btn btn-default');
+			ipdiv.setAttribute('class','input-group');
+			btn.innerHTML = "修改";
+		}
+
+		function modifyip(ip_sub) {
+			serviceip = eval(document.getElementById('serviceip')).value
+			ipdiv = document.getElementById('ipdiv')
+
+			$.post('/{{ stype }}/modifyip',{"ip":serviceip},function(data){
+				console.log(data);
+				if(data == 'success') {
+					ip_sub.setAttribute('class','btn btn-success');
+					ipdiv.setAttribute('class','input-group has-success');
+					ip_sub.innerHTML = "修改成功";
+				}else{
+					ip_sub.setAttribute('class','btn btn-danger');
+					ipdiv.setAttribute('class','input-group has-error')
+					ip_sub.innerHTML = "IP测试未通过"
+				}
+			})
+		}
+
+		function run(){
+			var resultdiv = document.getElementById("resultdiv");
+			var statuslabel = document.getElementById("status");
+			var run_btn = document.getElementById("run");
+			statuslabel.style.color = "green";
+			resultdiv.style.color = "green";
+			run_btn.disabled = true;
+			statuslabel.innerHTML = "正在运行...";
+			resultdiv.innerHTML = "";
+			$.post('/{{stype}}/run',function(data) {
+				result = JSON.parse(data)
+				console.log(result)
+				if (result.errorMsg == '已有任务正在运行') {
+					statuslabel.style.color = "red";
+					resultdiv.style.color = "red";
+					statuslabel.innerHTML = "失败！";
+					resultdiv.innerHTML = "已有任务正在运行";
+				}else {
+					if (result.result == 1) {
+						statuslabel.style.color = "green";
+						statuslabel.innerHTML = "成功！";
+					}else {
+						statuslabel.style.color = "red";
+						$("#resultdiv").children().last().css("color","red");
+						statuslabel.innerHTML = "失败！";
+						resultdiv.innerHTML = result.errorMsg;
+					}
+				}
+				run_btn.disabled = "";
+			})
+		}
+
+		var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+		socket.on('connect',function(){
+			console.log("[connected on server]");
+			console.log("socket open");
+		})
+
+		socket.on('{{ stype }}',function(data){
+			console.log(data)
+			//data = JSON.parse(data);
+			var reg = new RegExp("indexid","g");
+			console.log("[receive]",data);
+			$('#resultdiv').append("<li id=indexid class='list-group-item has-success'>".replace(reg,data.id) + now()+ " " +data.info + "</li>")
+			location.hash = data.id;
+		})
+
+		socket.on('disconnect',function(){
+			console.log("[disconnected from server]");
+		})
+ 
+		function send(value) {
+			console.log("[send]",value);
+			socket.emit('testio',value);
+		}
+	</script>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}
+1v1_auto
+{% endblock %}
+
+{% block body %}
+	<div class="modal fade" id="logmodal" tabindex="-1" role="dialog" aria-labelledby="logmodal">
+	  <div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="logmodaltitle"></h4>
+		  </div>
+		  <div class="modal-body" id="logcontent">
+				正在获取日志...
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
+		<div style="text-align:right">
+			<button class="btn btn-default" onclick="dellog()">删除所有</button>
+		</div>
+
+	<div style="margin-top:10px">
+		<div id="statusdiv" style="text-align:center">
+		</div>
+		<div id="infodiv" style="text-align:left" class="list-group">
+		</div>
+	</div>
+	<script src="/static/jquery/jquery.min.js"></script>
+	<script language="javascript">
+		window.onload = getlogs();
+		function getlogs() {
+			var infodiv = document.getElementById("infodiv");
+			var statusdiv = document.getElementById("statusdiv");
+			statusdiv.innerHTML = "正在获取日志...";
+			$.get('/{{ stype }}/getinfo',function(data){
+				statusdiv.innerHTML = "";
+				info = JSON.parse(data);
+				if(info.success.length > 0 || info.failed.length > 0){
+					if(info.failed.length > 0) {
+						$("<label>Failed：</label>").appendTo("#infodiv")
+						$("<ul>").appendTo("#infodiv")
+						info.failed.forEach(function(err){
+							infodiv.innerHTML += "<li class='list-group-item'><a href='#' onclick='showlog(this)' style='color:red' data-toggle='modal' data-target='#logmodal'>" + err + "</a></i>";
+						})
+						$("</ul>").appendTo("#infodiv")
+					}
+					if(info.success.length > 0) {
+						$("<label style='margin-top:10px'>Success：</label>").appendTo("#infodiv")
+						$("<ul>").appendTo("#infodiv")
+						info.success.forEach(function(succ){
+							infodiv.innerHTML += "<li class='list-group-item'><a href='#' onclick='showlog(this)' style='color:green' data-toggle='modal' data-target='#logmodal'>" + succ + "</a></i>";
+						})
+						$("</ul>").appendTo("#infodiv")
+					}
+
+				}else{
+					infodiv.innerHTML = "<li class='list-group-item'>没有运行记录</li>"
+				}
+				$("li:odd").css("background-color","#FFFFE0")
+			})
+		}
+		
+		function showlog(elem) {
+			name = $(elem).html();
+			$("#logmodaltitle").html(name);
+			$("#logcontent").html("");
+			$.get('/getloginfo',data={'file':name},function(data){
+				infos = JSON.parse(data);
+				infos.forEach(function(inf) {
+					$('#logcontent').append(inf+"<br>")
+				})
+			})
+		}
+
+		function dellog() {
+			$.post('/{{ stype }}/dellog',function(data){
+				location.reload(0);
+			})
+		}
+	</script>
+{% endblock %}

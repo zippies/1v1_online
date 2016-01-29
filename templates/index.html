@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/css/font-awesome.css" rel="stylesheet" type="text/css" />
+    <link href="/static/css/index.css" rel="stylesheet" type="text/css" />
+	<link href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />
+	<link href="/resources/demos/style.css" type="text/css" />
+	<script src="/static/jquery/jquery.min.js"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <title>首页</title>
+	
+	<script>
+		$(function() {
+			$( document ).tooltip({
+				  track:true
+			});
+		});
+	</script>
+	
+  </head>
+  <body>
+    <div class="container" title="{{ get_flashed_messages()[0].message }}">
+
+		<div class="hidenav">
+		  <div class="navbody">
+			{% if navitems %}
+				{% for item in navitems %}
+				<div class="navitems">
+				  <a onclick="{{ item.method }}" id="{{ item.id }}" class="btn">
+					<span class="icon icon-user"></span>
+					<span class="nav-text">{{ item.alias }}</span>
+				  </a>
+				</div>
+				{% endfor %}
+			{% endif %}
+			  <div class="navitems">
+				<a href="javascript:void(0);" onclick="showfloat(this)" class="btn">
+					<span class="icon icon-tasks"></span>
+					<span class="nav-text">友情链接</span>
+				</a>
+				<div class="navfloat" style="margin-left:950px">
+				{% if friendslink %}
+					{% for item in friendslink %}
+					  <div class="floatitems">
+						<a href="{{ item.link }}" class="btn btn-app btn-info">
+						  <span class="icon icon-group"></span>
+						  <span class="floattext">{{ item.alias }}</span>
+						</a>
+					  </div>
+					{% endfor %}
+				{% endif %}
+				</div>
+			  </div>  <!-- END:navitems -->
+	    	</div>
+		</div>	<!-- END:hidenav -->
+    </div> <!-- END:container -->
+
+	<div style="text-align:center;">
+		<div>
+			<iframe id="htmlcontainer" align="center" width="1100" src="/{{ stype }}/test" frameborder="no" border="0" marginwidth="0" marginheight="0" height="1000" scrolling="yes">
+			</iframe>
+		</div>
+	</div>
+    <script src="/static/js/index.js"></script>
+	
+  </body>
+</html>

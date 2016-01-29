@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}
+1v1_auto
+{% endblock %}
+
+{% block body %}
+	<div style="text-align:right">
+		<button class="btn btn-default" onclick="delerror()">忽略所有</button>
+	</div>
+	<div style="text-align:left;margin-top:10px">
+		<div id="resultdiv" class="list-group">
+		</div>
+	</div>
+	<script src="/static/jquery/jquery.min.js"></script>
+	<script language="javascript">
+		window.onload = viewerror();
+		function viewerror() {
+			var resultdiv = document.getElementById("resultdiv");
+			resultdiv.innerHTML = "正在获取错误日志...";
+			$.get('/{{ stype }}/geterror',function(data){
+				resultdiv.innerHTML = "";
+				resultdiv.style.color = "red";
+				errors = JSON.parse(data);
+				if(errors.length > 0){
+					errors.forEach(function(e){
+						resultdiv.innerHTML += "<li class='list-group-item'><font color='red'>" + e + "</font></li>";
+					})
+				}else{
+					resultdiv.innerHTML = "<li class='list-group-item'>没有错误</li>"
+				}
+				$("li:odd").css("background-color","#FFFFE0")
+			})
+		}
+
+		function delerror() {
+			$.get('/delerror',function(data){
+				console.log(data);
+				location.reload(0);
+			});
+		}
+	</script>
+{% endblock %}

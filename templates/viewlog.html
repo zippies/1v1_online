@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{ logname }}</title>
+	<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/codemirror/codemirror.css">
+	<script src="/static/jquery/jquery.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/static/codemirror/codemirror.js"></script>
+	<script src="/static/codemirror/addon/placeholder.js"></script>
+	<script src="/static/codemirror/addon/autorefresh.js"></script>
+	<script src="/static/codemirror/addon/sublime.js"></script>
+	<script src="/static/codemirror/addon/python.js"></script>
+	<link rel="stylesheet" href="/static/codemirror/monokai.css">
+<style>
+	html {
+		overflow-y:hidden;
+	}
+	.li {
+		font-size:18px;
+		list-style:none;
+	}
+	#bottom { 
+		background-color:black; 
+		z-index:999; 
+		position:fixed; 
+		top:0; 
+		left:0; 
+		width:100%; 
+		_position:absolute;
+		_top: expression_r(documentElement.scrollTop + documentElement.clientHeight-this.offsetHeight); 
+		overflow:visible; 
+	}
+</style>
+</head>
+<body>
+<div class="col-lg-12" style="margin-top:20px">
+	<div style="height:40px">
+	</div>
+	<textarea id="log" name="log" placeholder="正在获取日志..">
+	</textarea>
+	<script>
+		var logeditor = CodeMirror.fromTextArea(document.getElementById("log"), {
+			lineNumbers: false,
+			mode: "python",
+			theme: "monokai"
+		});
+		logeditor.setSize('100%',860);
+	</script>
+</div>
+
+<div id="bottom" class="col-lg-12" style="height:50px">
+	<span class="col-lg-8" style="height:100%;text-align:center;color:red">
+		{% if errorinfo %}
+			<label style="margin-top:15px;font-size:17px">{{ errorinfo }}</label>
+		{% else %}
+			<label style="margin-top:15px;font-size:17px;color:green">Success</label>
+		{% endif %}
+	</span>
+	<span class="col-lg-4" style="height:100%;">
+	</span>
+</div>
+<script>
+	window.onload = getlog();	
+	function getlog() {
+		$.get('/getlog/{{ logname }}',function(data){
+			logeditor.getDoc().setValue(data);
+			logeditor.refresh();
+		})
+	}
+</script>
+
+
+</body>
+
+</html>
