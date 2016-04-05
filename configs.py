@@ -3,7 +3,7 @@ mode = 'debug' # debug,online
 
 class DebugConfig:
 	DEBUG = True
-	SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root@localhost:3306/monitordb'
+	SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root@localhost:3306/dbname'
 	SECRET_KEY = 'WHAT DO YOU WANT FROM ME'
 
 	@staticmethod
@@ -12,7 +12,7 @@ class DebugConfig:
 
 class ProductionOnlineConfig:
 	DEBUG = True
-	SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://monitor:monitorautomation@10.10.15.78:3306/monitordb'
+	SQLALCHEMY_DATABASE_URI = ''
 	SECRET_KEY = 'WHAT DO YOU WANT FROM ME'
 
 	@staticmethod
