@@ -48,18 +48,6 @@ class Users(db.Model):
 @manager.command
 def dbinit():
     db.create_all()
-    ip_inline = Serviceip(ip='http://180.150.184.115:180/',servertype=0)
-    ip_online = Serviceip(ip='http://zhibo.xueba100.com/',servertype=1)
-    tc_inline = Users(type='tc',usernos=['11155550000'],password='yewujiankong',password_md5='18c450c0a12cb59db5c6117941bd5970',servertype=0)
-    st_inline = Users(type='st',usernos=['11255550000'],password='yewujiankong',password_md5='18c450c0a12cb59db5c6117941bd5970',imgurl='http://wenba-img.ufile.ucloud.com.cn/u-20150930-02b5c27e-bc9b-47ce-b8f5-52fe879eda89.png',servertype=0)
-    tc_online = Users(type='tc',usernos=['11155550000'],password='yewujiankong',password_md5='18c450c0a12cb59db5c6117941bd5970',servertype=1)
-    st_online = Users(type='st',usernos=['11255550000'],password='yewujiankong',password_md5='18c450c0a12cb59db5c6117941bd5970',imgurl='http://wenba-img.ufile.ucloud.com.cn/u-20150930-02b5c27e-bc9b-47ce-b8f5-52fe879eda89.png',servertype=1)
-    db.session.add(ip_inline)
-    db.session.add(tc_inline)
-    db.session.add(st_inline)
-    db.session.add(ip_online)
-    db.session.add(tc_online)
-    db.session.add(st_online)
     db.session.commit()
     print("ok")
 
