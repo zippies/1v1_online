@@ -98,8 +98,8 @@ def getlog(path,file):
 def index(stype='inline'):
 	flash({"type":"info","message":"当前：%s环境！" %('QA' if stype=='inline' else '生产')})
 	friendslink = [
-		{"alias":"生产环境1v1" ,"link":"#########"} if stype=='inline' else {"alias":"QA环境1v1" ,"link":"################"},
-		{"alias":"监控系统","link":"#########################"}
+		{"alias":"###" ,"link":"#########"} if stype=='inline' else {"alias":"####" ,"link":"################"},
+		{"alias":"###","link":"#########################"}
 	]
 	navitems = [
 		{"alias":"手动测试1v1","method":"showhtml('%s/test')" %stype,"id":"run"},
